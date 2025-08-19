@@ -8,7 +8,8 @@ abstract class EchartsFlutterPlusPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static EchartsFlutterPlusPlatform _instance = MethodChannelEchartsFlutterPlus();
+  static EchartsFlutterPlusPlatform _instance =
+      MethodChannelEchartsFlutterPlus();
 
   /// The default instance of [EchartsFlutterPlusPlatform] to use.
   ///
