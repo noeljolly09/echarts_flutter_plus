@@ -8,9 +8,6 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
   <a href="https://pub.dev/packages/echarts_flutter_plus">
     <img src="https://img.shields.io/pub/v/echarts_flutter_plus.svg" alt="Pub Version" />
   </a>
-  <a href="https://github.com/noeljolly09/echarts_flutter_plus/blob/main/LICENSE">
-    <img src="https://img.shields.io/pub/l/echarts_flutter_plus.svg" alt="License" />
-  </a>
   <a href="https://github.com/noeljolly09/echarts_flutter_plus/stargazers">
     <img src="https://img.shields.io/github/stars/noeljolly09/echarts_flutter_plus.svg" alt="GitHub stars" />
   </a>
