@@ -8,3 +8,7 @@
 ## [0.0.2] - 2025-08-19
 
 - Fixed pub analysis
+
+## [0.0.3] - 2025-08-19
+
+- Added topics to the plugin
