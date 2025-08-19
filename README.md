@@ -4,6 +4,29 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
 
 ---
 
+<p align="center">
+  <a href="https://pub.dev/packages/echarts_flutter_plus">
+    <img src="https://img.shields.io/pub/v/echarts_flutter_plus.svg" alt="Pub Version" />
+  </a>
+  <a href="https://github.com/noeljolly09/echarts_flutter_plus/blob/main/LICENSE">
+    <img src="https://img.shields.io/pub/l/echarts_flutter_plus.svg" alt="License" />
+  </a>
+  <a href="https://github.com/noeljolly09/echarts_flutter_plus/stargazers">
+    <img src="https://img.shields.io/github/stars/noeljolly09/echarts_flutter_plus.svg" alt="GitHub stars" />
+  </a>
+  <a href="https://github.com/noeljolly09/echarts_flutter_plus/actions/workflows/flutter.yml">
+    <img src="https://github.com/noeljolly09/echarts_flutter_plus/actions/workflows/flutter.yml/badge.svg" alt="CI Status" />
+  </a>
+  <a href="https://pub.dev/publisher/noeljolly09">
+    <img src="https://img.shields.io/pub/likes/echarts_flutter_plus.svg" alt="Likes on pub.dev" />
+  </a>
+  <a href="https://pub.dev/packages/echarts_flutter_plus/score">
+    <img src="https://img.shields.io/pub/score/echarts_flutter_plus.svg" alt="Pub Score" />
+  </a>
+</p>
+
+---
+
 ## Features
 
 - Full integration of Apache ECharts for Flutter Web.
