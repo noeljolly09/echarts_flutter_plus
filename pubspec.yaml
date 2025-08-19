@@ -10,8 +10,8 @@ license: MIT
 topics:
   - echarts
   - chart
-  - Apache ECharts
-  - data visualization
+  - apacheECharts
+  - dataVisualization
 
 
 environment:
