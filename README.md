@@ -1,4 +1,4 @@
-# flutter_echarts
+# echarts_flutter_plus
 
 A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts on Flutter Web.
 
@@ -47,13 +47,13 @@ Add this to your `pubspec.yaml` dependencies section:
 
 ```dart
 dependencies:
-flutter_echarts: ^0.0.1
+echarts_flutter_plus: ^0.0.1
 ```
 
 Now in your Dart code, you can use:
 
 ```dart
-import 'package:flutter_echarts/flutter_echarts.dart';  
+import 'package:echarts_flutter_plus/echarts_flutter_plus.dart';  
 ```
 
 Details see [pub.dev](https://pub.dev/packages/flutter_echarts#-installing-tab-).
@@ -68,7 +68,7 @@ Import the package in your Dart code:
 ```dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_echarts/flutter_echarts_web.dart';
+import 'package:echarts_flutter_plus/echarts_flutter_plus.dart';
 
 final option = {
   'xAxis': {
