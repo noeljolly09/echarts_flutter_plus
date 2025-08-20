@@ -1,6 +1,6 @@
 name: echarts_flutter_plus
 description: "Flutter plugin for rendering Apache ECharts charts on web."
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/noeljolly09/echarts_flutter_plus
 repository: https://github.com/noeljolly09/echarts_flutter_plus
 issue_tracker: https://github.com/noeljolly09/echarts_flutter_plus/issues

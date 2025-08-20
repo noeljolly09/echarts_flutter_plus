@@ -12,3 +12,9 @@
 ## [0.0.3] - 2025-08-19
 
 - Added topics to the plugin
+
+
+## [0.0.4] - 2025-08-20
+
+- Fixed Web Register bug
+- Updated Readme
