@@ -5,9 +5,9 @@ import 'dart:js_interop';
 import 'package:web/web.dart' as web;
 import 'dart:ui_web' as ui_web;
 
-class FlutterEchartsWeb extends EchartsFlutterPlusPlatform {
+class EchartsFlutterPlusWeb extends EchartsFlutterPlusPlatform {
   static void registerWith(dynamic registrar) {
-    EchartsFlutterPlusPlatform.instance = FlutterEchartsWeb();
+    EchartsFlutterPlusPlatform.instance = EchartsFlutterPlusWeb();
   }
 
   @override

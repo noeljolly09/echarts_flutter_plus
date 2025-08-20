@@ -7,20 +7,20 @@ final Map<String, dynamic> data = {
         {
           "name": "Frontend",
           "children": [
-            {"name": "React Team"},
-            {"name": "Flutter Team"},
-            {"name": "Vue Team"},
+            {"name": "React Team", "value": 1},
+            {"name": "Flutter Team", "value": 1},
+            {"name": "Vue Team", "value": 1},
           ],
         },
         {
           "name": "Backend",
           "children": [
-            {"name": "API Team"},
-            {"name": "Database Team"},
-            {"name": "DevOps Team"},
+            {"name": "API Team", "value": 1},
+            {"name": "Database Team", "value": 1},
+            {"name": "DevOps Team", "value": 1},
           ],
         },
-        {"name": "QA"},
+        {"name": "QA", "value": 1},
       ],
     },
     {
@@ -29,16 +29,16 @@ final Map<String, dynamic> data = {
         {
           "name": "Digital",
           "children": [
-            {"name": "Social Media"},
-            {"name": "SEO"},
-            {"name": "Content Creation"},
+            {"name": "Social Media", "value": 1},
+            {"name": "SEO", "value": 1},
+            {"name": "Content Creation", "value": 1},
           ],
         },
         {
           "name": "Events",
           "children": [
-            {"name": "Conferences"},
-            {"name": "Webinars"},
+            {"name": "Conferences", "value": 1},
+            {"name": "Webinars", "value": 1},
           ],
         },
       ],
@@ -49,16 +49,16 @@ final Map<String, dynamic> data = {
         {
           "name": "Domestic",
           "children": [
-            {"name": "Retail"},
-            {"name": "Wholesale"},
+            {"name": "Retail", "value": 1},
+            {"name": "Wholesale", "value": 1},
           ],
         },
         {
           "name": "International",
           "children": [
-            {"name": "EMEA"},
-            {"name": "APAC"},
-            {"name": "Americas"},
+            {"name": "EMEA", "value": 1},
+            {"name": "APAC", "value": 1},
+            {"name": "Americas", "value": 1},
           ],
         },
       ],
@@ -66,17 +66,17 @@ final Map<String, dynamic> data = {
     {
       "name": "HR",
       "children": [
-        {"name": "Recruitment"},
-        {"name": "Employee Relations"},
-        {"name": "Training & Development"},
+        {"name": "Recruitment", "value": 1},
+        {"name": "Employee Relations", "value": 1},
+        {"name": "Training & Development", "value": 1},
       ],
     },
     {
       "name": "Finance",
       "children": [
-        {"name": "Accounting"},
-        {"name": "Budgeting"},
-        {"name": "Payroll"},
+        {"name": "Accounting", "value": 1},
+        {"name": "Budgeting", "value": 1},
+        {"name": "Payroll", "value": 1},
       ],
     },
   ],
