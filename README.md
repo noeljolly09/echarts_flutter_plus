@@ -5,20 +5,12 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
 ---
 
 <p align="center">
-  <a href="https://pub.dev/packages/echarts_flutter_plus">
-    <img src="https://img.shields.io/pub/v/echarts_flutter_plus.svg" alt="Pub Version" />
-  </a>
-  <a href="https://github.com/noeljolly09/echarts_flutter_plus/stargazers">
-    <img src="https://img.shields.io/github/stars/noeljolly09/echarts_flutter_plus.svg" alt="GitHub stars" />
-  </a>
-  <a href="https://github.com/noeljolly09/echarts_flutter_plus/actions/workflows/flutter.yml">
-    <img src="https://github.com/noeljolly09/echarts_flutter_plus/actions/workflows/flutter.yml/badge.svg" alt="CI Status" />
-  </a>
+  <a href="https://pub.dev/packages/echarts_flutter_plus"><img src="https://img.shields.io/pub/v/echarts_flutter_plus.svg" alt="Pub Version" /></a>
+  <a href="https://github.com/noeljolly09/echarts_flutter_plus/stargazers"><img src="https://img.shields.io/github/stars/noeljolly09/echarts_flutter_plus.svg" alt="GitHub stars" /></a>
+  <a href="https://flutter.dev/docs/development/data-and-backend/state-mgmt/options#bloc--rx"><img src="https://img.shields.io/badge/flutter-website-deepskyblue.svg" alt="Flutter Website"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
   <a href="https://pub.dev/publisher/noeljolly09">
     <img src="https://img.shields.io/pub/likes/echarts_flutter_plus.svg" alt="Likes on pub.dev" />
-  </a>
-  <a href="https://pub.dev/packages/echarts_flutter_plus/score">
-    <img src="https://img.shields.io/pub/score/echarts_flutter_plus.svg" alt="Pub Score" />
   </a>
 </p>
 
@@ -76,7 +68,7 @@ Now in your Dart code, you can use:
 import 'package:echarts_flutter_plus/echarts_flutter_plus.dart';  
 ```
 
-Details see [pub.dev](https://pub.dev/packages/flutter_echarts#-installing-tab-).
+Details see [pub.dev](https://pub.dev/packages/echarts_flutter_plus#-installing-tab-).
 
 --- 
 
@@ -148,7 +140,7 @@ EChartsWebView(
 ## Development & Contribution
 
 Contributions, bug reports, and feature requests are welcome!  
-Please open issues or pull requests on [GitHub repository](https://github.com/yourusername/flutter_echarts).
+Please open issues or pull requests on [GitHub repository](https://github.com/noeljolly09/echarts_flutter_plus).
 
 ---
 
