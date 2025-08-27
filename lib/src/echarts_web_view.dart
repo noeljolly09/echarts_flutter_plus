@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:echarts_flutter_plus/echarts_flutter_plus_platform_interface.dart';
+import 'package:echarts_flutter_plus/src/utils/theme_mode.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:js_interop';
 import 'package:web/web.dart' as web;
@@ -25,50 +26,57 @@ external JSObject _echartsInit(web.Element el, [String? theme, JSAny? opts]);
 @JS('JSON.parse')
 external JSObject _jsParseJson(String json);
 
-extension _EChartsInterop on JSObject {
+@JS('window.onEChartsEvent')
+external set _onEChartsEvent(JSFunction f);
+
+/// Extension to declare the JS methods you use on echarts instances
+extension EChartsInterop on JSObject {
   external void setOption(JSAny option, [bool? notMerge]);
   external void dispose();
   external void resize();
+  external void on(String eventName, JSFunction callback);
+  external void off(String eventName, [JSFunction? callback]);
 }
 
+/// Flutter web widget embedding an Apache ECharts chart.
 ///
-/// A fully customizable Flutter Web widget embedding Apache ECharts charts.
-/// Use the [option] parameter to pass ECharts option JSON as a string.
+/// This widget renders an interactive ECharts chart using the Flutter web platform.
+/// Use the [option] JSON string to configure chart data and styling.
 ///
-/// Exception and errors can be handled via [errorBuilder].
-///
+/// Supports extensive configuration, custom themes, and event callbacks.
 class EChartsWebView extends StatefulWidget {
-  /// JSON string of the ECharts option.
+  /// JSON string containing the ECharts option configuration.
   final String option;
 
-  /// Chart width in pixels.
+  /// The width of the chart container in pixels.
   final double width;
 
-  /// Chart height in pixels.
+  /// The height of the chart container in pixels.
   final double height;
 
-  /// Optional theme for ECharts.
-  final String? theme;
+  /// Optional theme mode for the chart.
+  final ChartThemeMode? theme;
 
-  /// Enable/disable logging (prints debug messages to console).
+  /// Whether detailed debug logs should be printed to the console.
   final bool enableLogger;
 
-  /// Custom error widget builder.
+  /// Optional widget builder to display a custom error UI.
   final Widget Function(BuildContext context, Object error, StackTrace? stack)?
   errorBuilder;
 
-  /// Time in seconds before timeout if ECharts fails to load.
+  /// Timeout in seconds for loading the ECharts JavaScript library.
   final int loadTimeoutSeconds;
 
-  /// Reload trigger. Increment to force reloading the chart.
+  /// Increment this value to force a full reload and re-initialization of the chart.
   final int reload;
 
-  /// Additional container HTML attributes.
-  final Map<String, String>? containerAttributes;
-
-  /// Extra init options for ECharts initialization.
+  /// Optional advanced initialization options passed as raw JS objects to [echarts.init].
   final JSAny? initOptions;
 
+  /// Map of ECharts event names to Dart callbacks.
+  final Map<String, void Function(dynamic params)>? onEvents;
+
+  /// Creates an instance of [EChartsWebView].
   const EChartsWebView({
     super.key,
     required this.option,
@@ -79,8 +87,8 @@ class EChartsWebView extends StatefulWidget {
     this.errorBuilder,
     this.loadTimeoutSeconds = 12,
     this.reload = 0,
-    this.containerAttributes,
     this.initOptions,
+    this.onEvents,
   });
 
   @override
@@ -174,9 +182,6 @@ class _EChartsWebViewState extends State<EChartsWebView> {
       'style',
       'width: ${widget.width}px; height: ${widget.height}px;',
     );
-    widget.containerAttributes?.forEach(
-      (k, v) => _container.setAttribute(k, v),
-    );
   }
 
   Future<void> _initChart() async {
@@ -202,8 +207,15 @@ class _EChartsWebViewState extends State<EChartsWebView> {
     if (_echarts != null) {
       try {
         final optionObj = _jsParseJson(widget.option);
-        _chart = _echartsInit(_container, widget.theme, widget.initOptions);
+        _chart = _echartsInit(
+          _container,
+          widget.theme?.name ?? ChartThemeMode.light.name,
+          widget.initOptions,
+        );
         _chart!.setOption(optionObj, true);
+
+        _setupEventCallbacks();
+
         setState(() {
           _lastError = null;
           _lastStack = null;
@@ -218,6 +230,40 @@ class _EChartsWebViewState extends State<EChartsWebView> {
     } else {
       _log('ECharts JS not present at rendering time');
     }
+  }
+
+  /// Sets up forwarding of ECharts JavaScript events to Dart callbacks.
+  ///
+  /// This method binds the Dart callbacks as JS functions directly on the ECharts instance.
+  void _setupEventCallbacks() {
+    if (_chart == null) {
+      _log('Chart instance is null, cannot attach events.');
+      return;
+    }
+
+    if (widget.onEvents == null || widget.onEvents!.isEmpty) {
+      _log('No events to subscribe.');
+      return;
+    }
+
+    widget.onEvents!.forEach((eventName, dartCallback) {
+      // Convert Dart callback to JSFunction using toJS
+      JSFunction jsCallback =
+          ((JSAny params) {
+            dartCallback(params);
+          }).toJS;
+
+      // Attach event on the chart instance
+      _chart!.on(eventName, jsCallback);
+    });
+
+    // Optionally set the global JS event handler callback if used elsewhere
+    _onEChartsEvent =
+        ((String event, JSAny params) {
+          if (widget.onEvents!.containsKey(event)) {
+            widget.onEvents![event]!(params);
+          }
+        }).toJS;
   }
 
   @override
