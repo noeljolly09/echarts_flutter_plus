@@ -37,10 +37,10 @@ class ChartDemoCard extends StatelessWidget {
                 enableLogger: true,
                 onEvents: {
                   // Subscribe to ECharts events using enum names
-                  EChartsEvent.click.name: (params) {
+                  EChartsEvent.click: (params) {
                     debugPrint('Click event: $params');
                   },
-                  EChartsEvent.mouseover.name: (params) {
+                  EChartsEvent.mouseover: (params) {
                     debugPrint('Mouse hover on chart: $params');
                   },
                 },

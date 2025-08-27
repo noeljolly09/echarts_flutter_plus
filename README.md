@@ -44,7 +44,7 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
 | `reload`             | `int`                             | Increment to force chart reload                        | 0       |
 | `containerAttributes`| `Map<String, String>?`            | Extra HTML container attributes                        | null    |
 | `initOptions`        | `JSAny?`                          | Extra ECharts JS initialization options (advanced)    | null    |
-| `onEvents`        | `Map<String, void Function(dynamic)>?`                          | Map of ECharts event names to Dart event handler callbacks    | null    |
+| `onEvents`        | `Map<EChartsEvent, void Function(dynamic)>?`                          | Map of ECharts event names to Dart event handler callbacks    | null    |
 
 ---
 
@@ -62,7 +62,7 @@ Add this to your `pubspec.yaml` dependencies section:
 
 ```dart
 dependencies:
-  echarts_flutter_plus: ^0.0.4
+  echarts_flutter_plus: ^0.0.6
 
 ```
 
@@ -117,10 +117,10 @@ class SimpleChartDemo extends StatelessWidget {
           theme: ChartThemeMode.dark,
           enableLogger: true,
           onEvents: {
-            'click': (params) {
+            EChartsEvent.click: (params) {
               debugPrint('Clicked: $params');
             },
-            'mouseover': (params) {
+            EChartsEvent.mouseover: (params) {
               debugPrint('Mouse over: $params');
             },
           },
@@ -142,8 +142,8 @@ You can listen to any ECharts event by passing a map of event names to callbacks
 EChartsWebView(
   option: jsonEncode(option),
   onEvents: {
-    'click': (params) => debugPrint('Clicked: $params'),
-    'datazoom': (params) => debugPrint('Zoomed: $params'),
+    EChartsEvent.click: (params) => debugPrint('Clicked: $params'),
+    EChartsEvent.datazoom: (params) => debugPrint('Zoomed: $params'),
   },
 );
 

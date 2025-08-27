@@ -23,3 +23,7 @@
 
 - Added chart events callback mechansim
 - Deprecated Container Attibutes
+
+## [0.0.6] - 2025-08-27
+
+- Updated Typos
