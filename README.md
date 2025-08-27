@@ -19,12 +19,14 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
 ## Features
 
 - Full integration of Apache ECharts for Flutter Web.
-- Supports rendering various chart types including line, bar, pie, sunburst, tree, and more.
-- Pass any ECharts option JSON string to fully customize your charts.
-- Handles asynchronous loading of the ECharts JavaScript library from CDN.
-- Supports dynamic updates and chart reloads.
-- Provides custom error handling with error widgets.
-- Lightweight and easy to use Flutter widget.
+- Supports rendering many chart types: line, bar, pie, sunburst, tree, and more.
+- Customize charts fully by passing ECharts option JSON string.
+- Supports asynchronous loading of ECharts JavaScript library from CDN.
+- Smooth dynamic updates and redraws with reactive option changes.
+- Custom error handling via user-provided error widgets.
+- Supports dark and light themes via a convenient Dart enum.
+- Rich event callbacks: subscribe to any ECharts event (click, zoom, mouseover).
+- Lightweight, easy-to-use Flutter widget.
 
 ---
 
@@ -42,6 +44,7 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
 | `reload`             | `int`                             | Increment to force chart reload                        | 0       |
 | `containerAttributes`| `Map<String, String>?`            | Extra HTML container attributes                        | null    |
 | `initOptions`        | `JSAny?`                          | Extra ECharts JS initialization options (advanced)    | null    |
+| `onEvents`        | `Map<String, void Function(dynamic)>?`                          | Map of ECharts event names to Dart event handler callbacks    | null    |
 
 ---
 
@@ -59,7 +62,8 @@ Add this to your `pubspec.yaml` dependencies section:
 
 ```dart
 dependencies:
-echarts_flutter_plus: ^0.0.1
+  echarts_flutter_plus: ^0.0.4
+
 ```
 
 Now in your Dart code, you can use:
@@ -92,12 +96,11 @@ final option = {
   },
   'series': [
     {
-      'type': 'line', 
+      'type': 'line',
       'data': [820, 932, 901, 934],
     },
   ],
 };
-
 
 class SimpleChartDemo extends StatelessWidget {
   const SimpleChartDemo({super.key});
@@ -105,18 +108,49 @@ class SimpleChartDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ECharts Demo')),
+      appBar: AppBar(title: const Text('ECharts Demo')),
       body: Center(
         child: EChartsWebView(
           option: jsonEncode(option),
           width: 400,
           height: 300,
+          theme: ChartThemeMode.dark,
+          enableLogger: true,
+          onEvents: {
+            'click': (params) {
+              debugPrint('Clicked: $params');
+            },
+            'mouseover': (params) {
+              debugPrint('Mouse over: $params');
+            },
+          },
         ),
       ),
     );
   }
 }
+
 ```
+
+---
+
+## Event Handling
+
+You can listen to any ECharts event by passing a map of event names to callbacks in `onEvents`. The callbacks receive the raw event data.
+
+```dart
+EChartsWebView(
+  option: jsonEncode(option),
+  onEvents: {
+    'click': (params) => debugPrint('Clicked: $params'),
+    'datazoom': (params) => debugPrint('Zoomed: $params'),
+  },
+);
+
+```
+
+---
+
 
 
 ---

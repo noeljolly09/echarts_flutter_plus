@@ -18,3 +18,8 @@
 
 - Fixed Web Register bug
 - Updated Readme
+
+## [0.0.5] - 2025-08-27
+
+- Added chart events callback mechansim
+- Deprecated Container Attibutes
