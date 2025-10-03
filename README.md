@@ -1,6 +1,6 @@
 # echarts_flutter_plus
 
-A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts on Flutter Web.
+A Flutter web plugin to fully integrate Apache ECharts in Flutter Web apps, enabling rich visualizations with dynamic configuration and event handling.
 
 ---
 
@@ -18,15 +18,16 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
 
 ## Features
 
-- Full integration of Apache ECharts for Flutter Web.
-- Supports rendering many chart types: line, bar, pie, sunburst, tree, and more.
-- Customize charts fully by passing ECharts option JSON string.
-- Supports asynchronous loading of ECharts JavaScript library from CDN.
-- Smooth dynamic updates and redraws with reactive option changes.
-- Custom error handling via user-provided error widgets.
-- Supports dark and light themes via a convenient Dart enum.
-- Rich event callbacks: subscribe to any ECharts event (click, zoom, mouseover).
-- Lightweight, easy-to-use Flutter widget.
+- Full integration of Apache ECharts JavaScript library for Flutter Web.
+- Supports a wide variety of chart types: line, bar, pie, sunburst, tree, scatter, and more.
+- Allows configuration with complete ECharts option JSON or raw JS object string.
+- Safe default mode parsing pure JSON options; optional raw JS parsing for advanced features.
+- Asynchronously loads the ECharts JS library from CDN.
+- Supports dynamic updates and smooth redrawing on option changes and reloading.
+- Custom error handling with user-provided error widgets.
+- Supports dark and light themes via ChartThemeMode.
+- Rich event subscription mechanism to receive callbacks on any ECharts event.
+- Lightweight, easy-to-use Flutter widget for embedding charts.
 
 ---
 
@@ -34,15 +35,15 @@ A Flutter plugin to seamlessly embed and display powerful Apache ECharts charts 
 
 | Parameter            | Type                                  | Description                                           | Default |
 |----------------------|-------------------------------------|-------------------------------------------------------|---------|
-| `option`             | `String` (required)                 | JSON string of the ECharts option to render the chart | —       |
+| `option`             | `String` (required)                 | The ECharts option string. When rawOption is false, must be valid JSON. | —       |
+| `rawOption`              | `bool`                           | If true, option is parsed as a raw JavaScript object literal (unsafe).                                  | false     |
 | `width`              | `double`                           | Chart width in pixels                                  | 400     |
 | `height`             | `double`                           | Chart height in pixels                                 | 300     |
-| `theme`              | `String?`                         | Optional ECharts theme name                            | null    |
+| `theme`              | `String?`                         | Chart theme mode (e.g., light or dark). Defaults to light if null.                            | null    |
 | `enableLogger`       | `bool`                            | Print debug logs in browser console                    | false   |
 | `errorBuilder`       | `Widget Function(BuildContext, Object, StackTrace?)?` | Widget builder for displaying errors                  | null    |
 | `loadTimeoutSeconds` | `int`                             | Seconds before ECharts load timeout triggers an error | 12      |
 | `reload`             | `int`                             | Increment to force chart reload                        | 0       |
-| `containerAttributes`| `Map<String, String>?`            | Extra HTML container attributes                        | null    |
 | `initOptions`        | `JSAny?`                          | Extra ECharts JS initialization options (advanced)    | null    |
 | `onEvents`        | `Map<EChartsEvent, void Function(dynamic)>?`                          | Map of ECharts event names to Dart event handler callbacks    | null    |
 
@@ -62,7 +63,7 @@ Add this to your `pubspec.yaml` dependencies section:
 
 ```dart
 dependencies:
-  echarts_flutter_plus: ^0.0.6
+  echarts_flutter_plus: ^0.0.7
 
 ```
 
@@ -129,7 +130,67 @@ class SimpleChartDemo extends StatelessWidget {
     );
   }
 }
+```
 
+---
+
+
+### Raw JavaScript Option Usage (Advanced)
+
+Enable rawOption to allow the entire option string to include JavaScript code such as formatter functions:
+
+```dart
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:echarts_flutter_plus/echarts_flutter_plus.dart';
+
+final rawOption = '''
+{
+  tooltip: {
+    formatter: function(params) {
+      return params.name + ': ' + params.value;
+    }
+  },
+  xAxis: {
+    type: 'category',
+    data: ['Mon', 'Tue', 'Wed'],
+  },
+  yAxis: { type: 'value' },
+  series: [{
+    type: 'line',
+    data: [150, 230, 210]
+  }]
+}
+''';
+
+class SimpleChartDemo extends StatelessWidget {
+  const SimpleChartDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ECharts Demo')),
+      body: Center(
+        child: EChartsWebView(
+          option: rawOption,
+          width: 400,
+          height: 300,
+          rawOption: true,
+          theme: ChartThemeMode.dark,
+          enableLogger: true,
+          onEvents: {
+            EChartsEvent.click: (params) {
+              debugPrint('Clicked: $params');
+            },
+            EChartsEvent.mouseover: (params) {
+              debugPrint('Mouse over: $params');
+            },
+          },
+        ),
+      ),
+    );
+  }
+}
 ```
 
 ---
@@ -148,11 +209,6 @@ EChartsWebView(
 );
 
 ```
-
----
-
-
-
 ---
 
 ## Error Handling

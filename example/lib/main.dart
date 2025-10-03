@@ -1,3 +1,4 @@
+import 'package:echarts_flutter_plus_example/charts/raw_option_tree.dart';
 import 'package:flutter/material.dart';
 
 import 'charts/heatmap_chart_example.dart';
@@ -35,6 +36,7 @@ class EChartsDemoApp extends StatelessWidget {
                 barChartExample,
                 pieChartExample,
                 radialTreeExample,
+                rawJsOptionTreeExample,
                 scatterChartExample,
                 radarChartExample,
                 gaugeChartExample,

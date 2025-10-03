@@ -6,11 +6,13 @@ class ChartDemoCard extends StatelessWidget {
   final String optionJson;
   final double width;
   final double height;
+  final bool rawOption;
 
   const ChartDemoCard({
     super.key,
     required this.title,
     required this.optionJson,
+    this.rawOption = false,
     this.width = 480,
     this.height = 340,
   });
@@ -32,6 +34,7 @@ class ChartDemoCard extends StatelessWidget {
               height: height,
               child: EChartsWebView(
                 option: optionJson,
+                rawOption: rawOption,
                 width: width,
                 height: height,
                 enableLogger: true,
