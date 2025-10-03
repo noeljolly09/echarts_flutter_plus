@@ -27,3 +27,7 @@
 ## [0.0.6] - 2025-08-27
 
 - Updated Typos
+
+## [0.0.7] - 2025-10-03
+
+- Added Raw Option Mechanism, Raw JS functions can be used inside option.
