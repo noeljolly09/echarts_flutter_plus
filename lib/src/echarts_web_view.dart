@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui_web' as ui_web;
 import 'package:echarts_flutter_plus/echarts_flutter_plus_platform_interface.dart';
 import 'package:echarts_flutter_plus/echarts_flutter_plus_web.dart';
@@ -182,7 +181,7 @@ class _EChartsWebViewState extends State<EChartsWebView> {
 
   void _log(Object? msg) =>
       widget.enableLogger
-          ? debugPrint('[ECharts:${_instanceCounter}] $msg')
+          ? debugPrint('[ECharts:$_instanceCounter] $msg')
           : null;
 
   @override
