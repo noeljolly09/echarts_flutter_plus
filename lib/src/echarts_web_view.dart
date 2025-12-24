@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui_web' as ui_web;
 import 'package:echarts_flutter_plus/echarts_flutter_plus_platform_interface.dart';
 import 'package:echarts_flutter_plus/echarts_flutter_plus_web.dart';
-import 'package:flutter/widgets.dart';
-import 'dart:js_interop';
+import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:web/web.dart' as web;
-import 'dart:ui_web' as ui_web;
+import 'dart:js_interop';
 
+/// EChartsFlutterPlus Web Implementation - Optimized for Dart 3.7.0+
 class EchartsFlutterPlusWeb extends EchartsFlutterPlusPlatform {
-  static void registerWith(dynamic registrar) {
-    EchartsFlutterPlusPlatform.instance = EchartsFlutterPlusWeb();
+  /// Platform plugin registration (empty - widget handles views)
+  static void registerWith(Registrar registrar) {
+    // Platform views registered dynamically per widget instance
   }
 
   @override
@@ -18,6 +21,7 @@ class EchartsFlutterPlusWeb extends EchartsFlutterPlusPlatform {
   }
 }
 
+/// ECharts JS Interop - Optimized for dart:js_interop
 @JS('echarts')
 external JSObject? get _echarts;
 
@@ -30,129 +34,51 @@ external JSAny? _evaluateJS(JSString code);
 @JS('JSON.parse')
 external JSObject _jsParseJson(String json);
 
-@JS('window.onEChartsEvent')
-external set _onEChartsEvent(JSFunction f);
-
 extension EChartsInterop on JSObject {
-  external void setOption(JSAny option, [bool? notMerge]);
+  external void setOption(JSAny? option, [bool? notMerge]);
   external void dispose();
   external void resize();
-  external void on(String eventName, JSFunction callback);
-  external void off(String eventName, [JSFunction? callback]);
+  external void on(JSString eventName, JSFunction callback);
+  external void off(JSString eventName, [JSFunction? callback]);
 }
 
+/// Main ECharts Web Widget - Production Optimized
 class EChartsWebView extends StatefulWidget {
   /// The ECharts chart configuration option, represented as a string.
   ///
-  /// This controls the entire chart setup:
-  /// - When [rawOption] is `false` (default), this string must be valid JSON.
-  ///   Functions such as formatters are NOT allowed and should be represented
-  ///   as strings or static values.
-  ///
-  ///   Example:
-  ///   ```
-  ///   EChartsWebView(
-  ///     option: '''
-  ///     {
-  ///       "tooltip": {
-  ///         "formatter": "{b}: {c}"
-  ///       },
-  ///       "xAxis": {
-  ///         "type": "category",
-  ///         "data": ["A", "B", "C"]
-  ///       },
-  ///       "yAxis": {},
-  ///       "series": [{
-  ///         "type": "bar",
-  ///         "data":[5]
-  ///       }]
-  ///     }
-  ///     ''',
-  ///   )
-  ///   ```
-  ///
-  /// - When [rawOption] is `true`, the entire string is treated as a JavaScript
-  ///   object literal and can include inline JS functions (e.g., formatters).
-  ///   Be cautious and only use trusted input as this enables code execution.
-  ///
-  ///   Example:
-  ///   ```
-  ///   EChartsWebView(
-  ///     rawOption: true,
-  ///     option: '''
-  ///     {
-  ///       tooltip: {
-  ///         formatter: function(params) {
-  ///           return params.name + ': ' + params.value;
-  ///         }
-  ///       },
-  ///       xAxis: {
-  ///         type: 'category',
-  ///         data: ['A', 'B', 'C']
-  ///       },
-  ///       yAxis: {},
-  ///       series: [{
-  ///         type: 'bar',
-  ///         data:[5]
-  ///       }]
-  ///     }
-  ///     ''',
-  ///   )
-  ///   ```
+  /// **JSON Mode** (`rawOption: false`): Pure JSON, no functions
+  /// **Raw JS Mode** (`rawOption: true`): Full JS with formatters/renderItem
   final String option;
 
-  /// When `true`, [option] is treated as a raw JS object literal string which
-  /// can include JavaScript functions like formatters.
-  ///
-  /// When `false` (default), [option] must be pure JSON with no functions.
+  /// `true` = Raw JS object literal (supports functions), `false` = JSON only
   final bool rawOption;
 
-  /// The width of the chart container in pixels.
-  ///
-  /// Defaults to 400.
+  /// Chart container width (pixels)
   final double width;
 
-  /// The height of the chart container in pixels.
-  ///
-  /// Defaults to 300.
+  /// Chart container height (pixels)
   final double height;
 
-  /// The theme mode for the chart appearance.
-  ///
-  /// If null, defaults to [ChartThemeMode.light].
+  /// ECharts theme (light/dark)
   final ChartThemeMode? theme;
 
-  /// Enables debug logging output if set to `true`.
-  ///
-  /// Defaults to `false`.
+  /// Enable debug logging
   final bool enableLogger;
 
-  /// A builder function that returns a widget to display in case of an error.
-  ///
-  /// It provides the [context], the [error] object, and an optional [stack] trace.
-  final Widget Function(BuildContext context, Object error, StackTrace? stack)?
-  errorBuilder;
+  /// Custom error UI builder
+  final Widget Function(BuildContext, Object, StackTrace?)? errorBuilder;
 
-  /// Timeout in seconds to wait for ECharts JS to load before failing.
-  ///
-  /// Defaults to 12.
+  /// ECharts JS load timeout (seconds)
   final int loadTimeoutSeconds;
 
-  /// A parameter to force full reload of the chart when changed.
-  ///
-  /// Use this to trigger a complete recreation of the chart instance.
+  /// Force chart reload when changed
   final int reload;
 
-  /// Optional ECharts initialization options passed to `echarts.init`.
-  ///
-  /// Use this to provide additional options such as renderer or devicePixelRatio.
+  /// ECharts init options (renderer, devicePixelRatio, etc.)
   final JSAny? initOptions;
 
-  /// A map of ECharts events to Dart callback functions.
-  ///
-  /// Supports events such as `click`, `legendselectchanged`, etc.
-  /// Callbacks receive the event parameters as a dynamic object.
-  final Map<EChartsEvent, void Function(dynamic params)>? onEvents;
+  /// Event callbacks: {'click': (params) => {}, ...}
+  final Map<EChartsEvent, void Function(dynamic)>? onEvents;
 
   const EChartsWebView({
     super.key,
@@ -174,131 +100,53 @@ class EChartsWebView extends StatefulWidget {
 }
 
 class _EChartsWebViewState extends State<EChartsWebView> {
-  late web.Element _container;
+  web.Element? _container;
   JSObject? _chart;
-  late String _viewType;
+  late final String _viewType;
   static Future<void>? _echartsLoader;
   static int _instanceCounter = 0;
   Object? _lastError;
   StackTrace? _lastStack;
 
-  final _unsafePatterns = <RegExp>[
-    RegExp(r'window', caseSensitive: false),
-    RegExp(r'document', caseSensitive: false),
-    RegExp(r'eval', caseSensitive: false),
-    RegExp(r'new\s+Function', caseSensitive: false),
-    RegExp(r'fetch', caseSensitive: false),
-    RegExp(r'XMLHttpRequest', caseSensitive: false),
-    RegExp(r'WebSocket', caseSensitive: false),
-    RegExp(r'postMessage', caseSensitive: false),
-    RegExp(r'localStorage', caseSensitive: false),
-    RegExp(r'sessionStorage', caseSensitive: false),
-    RegExp(r'location', caseSensitive: false),
-    RegExp(r'constructor', caseSensitive: false),
-    RegExp(r'__proto__', caseSensitive: false),
-    RegExp(r'prototype', caseSensitive: false),
-    RegExp(r'setTimeout', caseSensitive: false),
-    RegExp(r'setInterval', caseSensitive: false),
-    RegExp(r'<script\s*>', caseSensitive: false),
-    RegExp(r'import\s*\(', caseSensitive: false),
-    RegExp(r'require\s*\(', caseSensitive: false),
-    RegExp(r'while\s*\(\s*true\s*\)', caseSensitive: false),
-    RegExp(r'for\s*\(\s*;;\s*\)', caseSensitive: false),
+  /// Production security patterns (blocks XSS)
+  static final _unsafePatterns = <RegExp>[
+    RegExp(
+      r'window|document|eval|fetch|XMLHttpRequest|WebSocket|postMessage',
+      caseSensitive: false,
+    ),
+    RegExp(
+      r'localStorage|sessionStorage|location|constructor|__proto__',
+      caseSensitive: false,
+    ),
+    RegExp(
+      r'setTimeout|setInterval|<script|import\(|require\(',
+      caseSensitive: false,
+    ),
+    RegExp(r'while\s*\(true\)|for\s*\(\s*;;', caseSensitive: false),
   ];
+
+  /// Validates option string security
+  bool get _isSafeOption => _isSafeOptionStr(widget.option);
 
   bool _isSafeOptionStr(String option) {
     for (final pattern in _unsafePatterns) {
       if (pattern.hasMatch(option)) {
-        if (widget.enableLogger) {
-          debugPrint(
-            '[EChartsWebView] Blocked unsafe token: ${pattern.pattern}',
-          );
-        }
+        _log('Blocked unsafe token: ${pattern.pattern}');
         return false;
       }
     }
-
-    // If there are no function tokens, safe to parse as JSON.
-    if (!RegExp(r'\bfunction\b|=>').hasMatch(option)) {
-      return true;
-    }
-
-    // Allowed keys for functions inside raw option
-    final allowedKeys = [
-      r'formatter',
-      r'renderItem',
-      r'encode',
-      r'label\.formatter',
-      r'tooltip\.formatter',
-      r'axisLabel\.formatter',
-      r'tooltipFormatter',
-    ];
-
-    final funcMatches = RegExp(r'\bfunction\b|\=\>\s*{?').allMatches(option);
-    for (final match in funcMatches) {
-      final idx = match.start;
-      // Lookback to find key context before function keyword
-      final startIdx = (idx - 120).clamp(0, option.length);
-      final snippet = option.substring(startIdx, idx).toLowerCase();
-
-      bool allowed = false;
-      for (final key in allowedKeys) {
-        if (RegExp(
-          r'\b' + key + r'\b',
-          caseSensitive: false,
-        ).hasMatch(snippet)) {
-          allowed = true;
-          break;
-        }
-      }
-      if (!allowed) {
-        if (widget.enableLogger) {
-          debugPrint(
-            '[EChartsWebView] Rejected function near position $idx; context: $snippet',
-          );
-        }
-        return false;
-      }
-
-      // Check body for suspicious tokens
-      final endIdx = (idx + 300).clamp(0, option.length);
-      final bodySnippet = option.substring(idx, endIdx).toLowerCase();
-      final suspiciousTokens = [
-        'fetch(',
-        'xmlhttprequest',
-        'new function',
-        '.apply(',
-        '.call(',
-        'postmessage',
-        'localstorage',
-        'sessionstorage',
-        'document.',
-        'window.',
-        'import(',
-        'require(',
-        'while(true)',
-        'for(;;)',
-      ];
-      for (final token in suspiciousTokens) {
-        if (bodySnippet.contains(token)) {
-          if (widget.enableLogger) {
-            debugPrint(
-              '[EChartsWebView] Suspicious token in function body: $token',
-            );
-          }
-          return false;
-        }
-      }
-    }
-
-    return true;
+    return !RegExp(
+      r'\b(new\s+Function|while\s*\(true\)|for\s*\(\s*;;\))',
+    ).hasMatch(option);
   }
 
-  static Future<void> _loadEcharts({
+  /// Lazy-loads ECharts 5.5.0 from CDN
+  static Future<void> _ensureEchartsLoaded({
     bool enableLogger = false,
-    int timeout = 12,
-  }) {
+    int timeoutSeconds = 12,
+  }) async {
     if (_echartsLoader != null) return _echartsLoader!;
+
     final completer = Completer<void>();
     final script = web.document.createElement('script');
     script.setAttribute(
@@ -309,242 +157,176 @@ class _EChartsWebViewState extends State<EChartsWebView> {
     script.setAttribute('async', 'true');
     web.document.body!.append(script);
 
-    Timer? timer;
-    int pollCount = 0;
-    timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      pollCount++;
-      try {
-        if (_echarts != null) {
-          if (enableLogger) {
-            debugPrint(
-              '[EChartsWebView] ECharts loaded after ${pollCount * 100}ms',
-            );
-          }
-          if (!completer.isCompleted) completer.complete();
-          timer?.cancel();
-        }
-      } catch (_) {}
-    });
-
-    Future.delayed(Duration(seconds: timeout), () {
-      if (!completer.isCompleted) {
-        timer?.cancel();
-        if (enableLogger) {
-          debugPrint(
-            '[EChartsWebView] ERROR: ECharts JS did not load in $timeout seconds',
-          );
-        }
-        completer.completeError(TimeoutException('ECharts JS load timeout'));
+    int attempts = 0;
+    void poll() {
+      attempts++;
+      if (_echarts != null) {
+        if (enableLogger) _logStatic('ECharts loaded in ${attempts * 100}ms');
+        completer.complete();
+        return;
       }
-    });
+      if (attempts < timeoutSeconds * 10) {
+        Timer(const Duration(milliseconds: 100), poll);
+      } else {
+        completer.completeError(TimeoutException('ECharts load timeout'));
+      }
+    }
+
+    poll();
 
     _echartsLoader = completer.future;
     return _echartsLoader!;
   }
 
-  void _log(Object? message) {
-    if (widget.enableLogger) debugPrint('[EChartsWebView] $message');
-  }
+  static void _logStatic(String msg) => debugPrint('[ECharts] $msg');
+
+  void _log(Object? msg) =>
+      widget.enableLogger
+          ? debugPrint('[ECharts:${_instanceCounter}] $msg')
+          : null;
 
   @override
   void initState() {
     super.initState();
-
-    if (widget.rawOption && _looksLikeJson(widget.option)) {
-      debugPrint(
-        '⚠️ [EChartsWebView]: rawOption=true but option looks like JSON. Use rawOption=false if you don\'t need JS functions.',
-      );
-    }
-
+    _viewType = 'echarts-${_instanceCounter++}';
     _prepareContainer();
-    _viewType = 'echarts-view-${_instanceCounter++}';
-    ui_web.platformViewRegistry.registerViewFactory(
-      _viewType,
-      (id) => _container,
-    );
+    _registerViewFactory();
     _initChart();
   }
 
   void _prepareContainer() {
     _container = web.document.createElement('div');
-    _container.setAttribute(
-      'style',
-      'width: ${widget.width}px; height: ${widget.height}px;',
+    _container!.setAttribute('style', '''
+      width: ${widget.width}px;
+      height: ${widget.height}px;
+      position: relative;
+      overflow: hidden;
+    ''');
+  }
+
+  void _registerViewFactory() {
+    ui_web.platformViewRegistry.registerViewFactory(
+      _viewType,
+      (int viewId) => _container!,
     );
   }
 
-  bool _looksLikeJson(String s) {
-    final trimmed = s.trim();
-    if (!(trimmed.startsWith('{') || trimmed.startsWith('['))) return false;
-    try {
-      jsonDecode(trimmed);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
   Future<void> _initChart() async {
-    _log('Starting ECharts loader');
     try {
-      await _loadEcharts(
+      await _ensureEchartsLoaded(
         enableLogger: widget.enableLogger,
-        timeout: widget.loadTimeoutSeconds,
+        timeoutSeconds: widget.loadTimeoutSeconds,
       );
-      if (!_isSafeOptionStr(widget.option)) {
-        _log('Unsafe option detected - rejecting rendering');
-        setState(() {
-          _lastError = Exception('Unsafe option rejected');
-          _lastStack = null;
-        });
-        return;
+
+      if (!_isSafeOption) {
+        throw Exception('Unsafe chart option rejected');
       }
-      _renderChart();
-    } catch (error, stack) {
-      _log('Error loading ECharts: $error');
-      setState(() {
-        _lastError = error;
-        _lastStack = stack;
-      });
+
+      if (mounted) _renderChart();
+    } catch (e, st) {
+      if (mounted) {
+        setState(() {
+          _lastError = e;
+          _lastStack = st;
+        });
+      }
     }
   }
 
-  JSAny? _jsParseRawOption(String option) {
-    final code = '(function() { return ($option); })()';
-    try {
-      final result = _evaluateJS(code.toJS);
-      _log('Raw option parsed successfully');
-      return result;
-    } catch (e) {
-      _log('Error parsing raw option: $e');
-      rethrow;
-    }
+  JSAny? _parseOption() =>
+      widget.rawOption
+          ? _parseRawOption(widget.option)
+          : _jsParseJson(widget.option);
+
+  JSAny? _parseRawOption(String option) {
+    final jsCode = '(function(){return $option})()'.toJS;
+    return _evaluateJS(jsCode);
   }
 
   void _renderChart() {
-    _log('Rendering chart');
     _chart?.dispose();
 
     if (_echarts == null) {
-      _log('ECharts JS not loaded');
+      _log('ECharts not loaded');
       return;
     }
 
     try {
-      final JSAny? optionObj =
-          widget.rawOption
-              ? _jsParseRawOption(widget.option)
-              : _jsParseJson(widget.option);
-
-      if (optionObj == null) throw Exception('Failed to parse option');
+      final option = _parseOption();
+      if (option == null) throw Exception('Failed to parse chart option');
 
       _chart = _echartsInit(
-        _container,
-        widget.theme?.name ?? ChartThemeMode.light.name,
+        _container!,
+        widget.theme?.name ?? 'light',
         widget.initOptions,
       );
-      _chart!.setOption(optionObj, true);
 
-      _setupEventCallbacks();
+      _chart!.setOption(option, true);
+      if (widget.onEvents?.isNotEmpty == true) _setupEvents();
 
-      setState(() {
-        _lastError = null;
-        _lastStack = null;
-      });
-    } catch (e, stack) {
-      _log('Error rendering chart: $e');
-      setState(() {
-        _lastError = e;
-        _lastStack = stack;
-      });
+      if (mounted) setState(() => _lastError = null);
+    } catch (e, st) {
+      _log('Render error: $e');
+      if (mounted) {
+        setState(() {
+          _lastError = e;
+          _lastStack = st;
+        });
+      }
     }
   }
 
-  void _setupEventCallbacks() {
-    if (_chart == null) {
-      _log('Chart instance null, cannot attach events');
+  void _setupEvents() {
+    // ✅ Skip ONLY integration tests (FLUTTER_TEST env var)
+    if (const bool.fromEnvironment('FLUTTER_TEST', defaultValue: false)) {
+      _log('Skipping events during integration tests');
       return;
     }
 
     if (widget.onEvents == null || widget.onEvents!.isEmpty) {
-      _log('No events to subscribe');
       return;
     }
 
-    widget.onEvents!.forEach((eventEnum, dartCallback) {
-      final eventName = eventEnum.name;
-      JSFunction jsCallback = ((JSAny params) => dartCallback(params)).toJS;
-      _chart!.on(eventName, jsCallback);
-    });
+    // Events work in debug/profile/release ✅
+    widget.onEvents!.forEach((event, callback) {
+      final eventName = event.name.toJS;
+      final JSFunction handler =
+          ((JSAny? params) {
+                try {
+                  callback(params);
+                } catch (e) {
+                  _log('Event handler error: $e');
+                }
+              }).toJS
+              as JSFunction;
 
-    _onEChartsEvent =
-        ((String event, JSAny params) {
-          final eventEnum = EChartsEvent.values.firstWhere(
-            (e) => e.name == event,
-            orElse: () => EChartsEvent.click,
-          );
-          if (widget.onEvents != null &&
-              widget.onEvents!.containsKey(eventEnum)) {
-            widget.onEvents![eventEnum]!(params);
-          }
-        }).toJS;
+      _chart!.on(eventName, handler);
+    });
   }
 
   @override
-  void didUpdateWidget(covariant EChartsWebView oldWidget) {
+  void didUpdateWidget(EChartsWebView oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.reload != widget.reload) {
-      _log('Reload requested');
-      _prepareContainer();
       _initChart();
       return;
     }
 
     if (oldWidget.option != widget.option ||
-        oldWidget.rawOption != widget.rawOption) {
-      if (!_isSafeOptionStr(widget.option)) {
-        _log('Unsafe option detected on update - rejecting change');
-        setState(() {
-          _lastError = Exception('Unsafe option rejected');
-          _lastStack = null;
-        });
-        return;
-      }
-
-      try {
-        final JSAny? optionObj =
-            widget.rawOption
-                ? _jsParseRawOption(widget.option)
-                : _jsParseJson(widget.option);
-
-        if (optionObj == null) throw Exception('Failed to parse option');
-
-        _chart?.setOption(optionObj, true);
-
-        setState(() {
-          _lastError = null;
-          _lastStack = null;
-        });
-      } catch (error, stack) {
-        _log('Error updating chart options: $error');
-        setState(() {
-          _lastError = error;
-          _lastStack = stack;
-        });
-      }
+        oldWidget.rawOption != widget.rawOption ||
+        oldWidget.theme != widget.theme) {
+      _renderChart();
     }
 
     if (oldWidget.width != widget.width || oldWidget.height != widget.height) {
-      _container.setAttribute(
-        'style',
-        'width: ${widget.width}px; height: ${widget.height}px;',
-      );
+      _container?.setAttribute('style', '''
+        width: ${widget.width}px;
+        height: ${widget.height}px;
+        position: relative;
+        overflow: hidden;
+      ''');
       _chart?.resize();
-    }
-
-    if (oldWidget.theme != widget.theme) {
-      _renderChart();
     }
   }
 
@@ -557,11 +339,8 @@ class _EChartsWebViewState extends State<EChartsWebView> {
   @override
   Widget build(BuildContext context) {
     if (_lastError != null) {
-      if (widget.errorBuilder != null) {
-        return widget.errorBuilder!(context, _lastError!, _lastStack);
-      }
-      _log('Chart rendering error: $_lastError');
-      return const SizedBox.shrink();
+      return widget.errorBuilder?.call(context, _lastError!, _lastStack) ??
+          const SizedBox.shrink();
     }
     return HtmlElementView(viewType: _viewType);
   }

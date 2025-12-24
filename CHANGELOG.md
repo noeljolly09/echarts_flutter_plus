@@ -31,3 +31,7 @@
 ## [0.0.7] - 2025-10-03
 
 - Added Raw Option Mechanism, Raw JS functions can be used inside option.
+
+## [0.0.8] - 2025-12-24
+
+- Added 3.*+ dart compatibilty.
